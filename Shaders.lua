@@ -176,7 +176,7 @@ HintInput.ZIndex, HintInput.Parent = 3, SearchBar
 
 local SearchInput = Instance.new("TextBox")
 SearchInput.Size, SearchInput.Position, SearchInput.BackgroundTransparency = UDim2.new(1, -16, 1, 0), UDim2.new(0, 8, 0, 0), 1
-SearchInput.Text, SearchInput.PlaceholderText, SearchInput.Font, SearchInput.TextSize = "", "Buscar shaders...", Enum.Font.Gotham, 12
+SearchInput.Text, SearchInput.PlaceholderText, SearchInput.Font, SearchInput.TextSize = "", "Search shaders...", Enum.Font.Gotham, 12
 SearchInput.TextColor3, SearchInput.PlaceholderColor3, SearchInput.TextXAlignment = Color3.new(1,1,1), Color3.fromRGB(180, 180, 185), Enum.TextXAlignment.Left
 SearchInput.ZIndex, SearchInput.Parent = 4, SearchBar
 
