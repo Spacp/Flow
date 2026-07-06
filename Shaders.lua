@@ -209,9 +209,9 @@ local ShaderButtons = {}
 local activeToggle = nil
 
 local ShaderOrder = {
-    "Realista (Nubes + Rayos + Blur)", "Sol Cercano (Ultra Rayos)", "Atardecer Dorado Épico",
-    "Anochecer Místico (Nubes Oscuras)", "Niebla Hermosa (Cinemática)", "Día Nublado (Overcast)",
-    "Invierno Helado", "Cinemático Pastel (Aesthetic)"
+    "Realistic", "Nearby Sun", "Golden Sunset",
+    "Mystical Dusk", "Fog", "Cloudy",
+    "Frozen Winter", "Cinematic Pastel"
 }
 
 for i, shaderName in ipairs(ShaderOrder) do
