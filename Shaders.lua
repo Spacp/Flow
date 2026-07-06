@@ -1,3 +1,5 @@
+-- FLOW UI | SHADERS (ENGLISH TRANSLATION FIX)
+
 if _G.FlowLoaded then return end
 _G.FlowLoaded = true
 
@@ -60,6 +62,7 @@ local function makeEffect(class, parent, props)
     return eff
 end
 
+-- CLAVES CAMBIADAS AL INGLÉS PARA COINCIDIR PERFECTAMENTE
 local Shaders = {
     ["Realistic"] = function()
 		Lighting.GlobalShadows = true; Lighting.ClockTime = 16.5; Lighting.Brightness = 3
@@ -71,7 +74,7 @@ local Shaders = {
         makeEffect("Clouds", Terrain, {Cover = 0.65, Density = 0.7, Color = Color3.fromRGB(255, 255, 255)})
 	end,
 
-	["Sun Nearby"] = function()
+	["Nearby Sun"] = function()
 		Lighting.GlobalShadows = true; Lighting.ClockTime = 15.8; Lighting.Brightness = 2.8
         makeEffect("ColorCorrectionEffect", Lighting, {Contrast = 0.15, TintColor = Color3.fromRGB(255, 245, 230)})
         makeEffect("DepthOfFieldEffect", Lighting, {FocusDistance = 25, InFocusRadius = 45, FarIntensity = 0.12, NearIntensity = 0})
@@ -80,7 +83,7 @@ local Shaders = {
         makeEffect("Clouds", Terrain, {Cover = 0.5, Density = 0.6, Color = Color3.fromRGB(255, 255, 255)})
 	end,
 	
-    ["Sunset"] = function()
+    ["Golden Sunset"] = function()
 		Lighting.GlobalShadows = true; Lighting.ClockTime = 17.6; Lighting.Brightness = 3.5
 		Lighting.Ambient = Color3.fromRGB(150, 100, 50); Lighting.OutdoorAmbient = Color3.fromRGB(140, 90, 40)
         makeEffect("ColorCorrectionEffect", Lighting, {Contrast = 0.2, Saturation = 0.2, TintColor = Color3.fromRGB(255, 220, 180)})
@@ -90,7 +93,7 @@ local Shaders = {
         makeEffect("Clouds", Terrain, {Cover = 0.75, Density = 0.85, Color = Color3.fromRGB(255, 150, 40)})
 	end,
 
-	["Mystic Evening"] = function()
+	["Mystical Dusk"] = function()
 		Lighting.GlobalShadows = true; Lighting.ClockTime = 6.4; Lighting.Brightness = 0.2 
 		Lighting.OutdoorAmbient = Color3.fromRGB(15, 18, 30); Lighting.Ambient = Color3.fromRGB(10, 12, 20)
         makeEffect("DepthOfFieldEffect", Lighting, {FocusDistance = 25, InFocusRadius = 45, FarIntensity = 0.15, NearIntensity = 0})
@@ -107,7 +110,7 @@ local Shaders = {
         makeEffect("DepthOfFieldEffect", Lighting, {FocusDistance = 25, InFocusRadius = 45, FarIntensity = 0.15, NearIntensity = 0})
 	end,
 
-    ["Cloudy Day"] = function()
+    ["Cloudy"] = function()
         Lighting.GlobalShadows = true; Lighting.ClockTime = 14; Lighting.Brightness = 1.8
 		Lighting.Ambient = Color3.fromRGB(120, 125, 130)
         makeEffect("ColorCorrectionEffect", Lighting, {Contrast = 0.1, Saturation = -0.35})
@@ -121,7 +124,7 @@ local Shaders = {
         makeEffect("DepthOfFieldEffect", Lighting, {FocusDistance = 25, InFocusRadius = 45, FarIntensity = 0.15, NearIntensity = 0})
     end,
 
-	["Cinematic Cake"] = function()
+	["Cinematic Pastel"] = function()
         Lighting.GlobalShadows = true; Lighting.ClockTime = 17.2; Lighting.Brightness = 3
 		Lighting.Ambient = Color3.fromRGB(170, 130, 150)
         makeEffect("ColorCorrectionEffect", Lighting, {Contrast = 0.1, Saturation = 0.25, TintColor = Color3.fromRGB(255, 220, 230)})
@@ -197,7 +200,7 @@ ResizeBtn.Size, ResizeBtn.Position, ResizeBtn.BackgroundTransparency = UDim2.new
 ResizeBtn.Text, ResizeBtn.TextColor3, ResizeBtn.TextTransparency = "◢", Color3.new(1,1,1), 0.40
 ResizeBtn.Font, ResizeBtn.TextSize, ResizeBtn.ZIndex = Enum.Font.GothamBold, 14, 10
 
--- LISTA Y FILAS DE SHADERS (VISIBILIDAD FIJADA)
+-- LISTA Y FILAS DE SHADERS
 local Content = Instance.new("ScrollingFrame", Win)
 Content.Size, Content.Position, Content.BackgroundTransparency = UDim2.new(1, -20, 1, -(MIN_H + 10)), UDim2.new(0, 10, 0, MIN_H + 5), 1
 Content.ScrollBarThickness, Content.BorderSizePixel, Content.ZIndex = 0, 0, 3
@@ -208,6 +211,7 @@ ListLayout.Padding = UDim.new(0, 6)
 local ShaderButtons = {}
 local activeToggle = nil
 
+-- LISTA DE ORDEN CON TUS NUEVOS NOMBRES EN INGLÉS
 local ShaderOrder = {
     "Realistic", "Nearby Sun", "Golden Sunset",
     "Mystical Dusk", "Fog", "Cloudy",
@@ -247,7 +251,7 @@ for i, shaderName in ipairs(ShaderOrder) do
             activeToggle = tData
             Tween(ToggleBg, {BackgroundColor3 = Color3.fromRGB(52, 199, 89)}, 0.15)
             Tween(Circle, {Position = UDim2.new(1, -16, 0.5, -7)}, 0.15)
-            clearShaders(); Shaders[shaderName]()
+            clearShaders(); Shaders[shaderName]() -- Llama correctamente a la función con la clave en inglés
         end
     end)
     table.insert(ShaderButtons, tData)
@@ -301,7 +305,7 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
--- MINIMIZAR ULTRA COMPACTO COMPLETO
+-- MINIMIZAR Y CERRAR
 local isClosing, isMinimized, savedSize = false, false, Vector2.new(defaultW, defaultH)
 
 MinBtn.MouseButton1Click:Connect(function()
