@@ -61,7 +61,7 @@ local function makeEffect(class, parent, props)
 end
 
 local Shaders = {
-    ["Realista (Nubes + Rayos + Blur)"] = function()
+    ["Realistic"] = function()
 		Lighting.GlobalShadows = true; Lighting.ClockTime = 16.5; Lighting.Brightness = 3
         Lighting.Ambient = Color3.fromRGB(120, 120, 120)
         makeEffect("ColorCorrectionEffect", Lighting, {Contrast = 0.2, Saturation = 0.1})
@@ -71,7 +71,7 @@ local Shaders = {
         makeEffect("Clouds", Terrain, {Cover = 0.65, Density = 0.7, Color = Color3.fromRGB(255, 255, 255)})
 	end,
 
-	["Sol Cercano (Ultra Rayos)"] = function()
+	["Sun Nearby"] = function()
 		Lighting.GlobalShadows = true; Lighting.ClockTime = 15.8; Lighting.Brightness = 2.8
         makeEffect("ColorCorrectionEffect", Lighting, {Contrast = 0.15, TintColor = Color3.fromRGB(255, 245, 230)})
         makeEffect("DepthOfFieldEffect", Lighting, {FocusDistance = 25, InFocusRadius = 45, FarIntensity = 0.12, NearIntensity = 0})
@@ -80,7 +80,7 @@ local Shaders = {
         makeEffect("Clouds", Terrain, {Cover = 0.5, Density = 0.6, Color = Color3.fromRGB(255, 255, 255)})
 	end,
 	
-    ["Atardecer Dorado Épico"] = function()
+    ["Sunset"] = function()
 		Lighting.GlobalShadows = true; Lighting.ClockTime = 17.6; Lighting.Brightness = 3.5
 		Lighting.Ambient = Color3.fromRGB(150, 100, 50); Lighting.OutdoorAmbient = Color3.fromRGB(140, 90, 40)
         makeEffect("ColorCorrectionEffect", Lighting, {Contrast = 0.2, Saturation = 0.2, TintColor = Color3.fromRGB(255, 220, 180)})
@@ -90,7 +90,7 @@ local Shaders = {
         makeEffect("Clouds", Terrain, {Cover = 0.75, Density = 0.85, Color = Color3.fromRGB(255, 150, 40)})
 	end,
 
-	["Anochecer Místico (Nubes Oscuras)"] = function()
+	["Mystic Evening"] = function()
 		Lighting.GlobalShadows = true; Lighting.ClockTime = 6.4; Lighting.Brightness = 0.2 
 		Lighting.OutdoorAmbient = Color3.fromRGB(15, 18, 30); Lighting.Ambient = Color3.fromRGB(10, 12, 20)
         makeEffect("DepthOfFieldEffect", Lighting, {FocusDistance = 25, InFocusRadius = 45, FarIntensity = 0.15, NearIntensity = 0})
@@ -99,7 +99,7 @@ local Shaders = {
         makeEffect("Clouds", Terrain, {Cover = 0.85, Density = 0.95, Color = Color3.fromRGB(60, 65, 75)})
 	end,
 
-	["Niebla Hermosa (Cinemática)"] = function()
+	["Fog"] = function()
 		Lighting.GlobalShadows = true; Lighting.FogColor = Color3.fromRGB(70, 90, 110)
 		Lighting.FogStart = 40; Lighting.FogEnd = 600
         makeEffect("ColorCorrectionEffect", Lighting, {Contrast = 0.1, Saturation = -0.1})
@@ -107,21 +107,21 @@ local Shaders = {
         makeEffect("DepthOfFieldEffect", Lighting, {FocusDistance = 25, InFocusRadius = 45, FarIntensity = 0.15, NearIntensity = 0})
 	end,
 
-    ["Día Nublado (Overcast)"] = function()
+    ["Cloudy Day"] = function()
         Lighting.GlobalShadows = true; Lighting.ClockTime = 14; Lighting.Brightness = 1.8
 		Lighting.Ambient = Color3.fromRGB(120, 125, 130)
         makeEffect("ColorCorrectionEffect", Lighting, {Contrast = 0.1, Saturation = -0.35})
         makeEffect("Clouds", Terrain, {Cover = 0.9, Density = 1, Color = Color3.fromRGB(100, 105, 115)})
     end,
 
-	["Invierno Helado"] = function()
+	["Frozen Winter"] = function()
         Lighting.GlobalShadows = true; Lighting.ClockTime = 9.5; Lighting.Brightness = 3.2
 		Lighting.Ambient = Color3.fromRGB(170, 200, 240)
         makeEffect("ColorCorrectionEffect", Lighting, {Contrast = 0.15, Saturation = -0.2, TintColor = Color3.fromRGB(220, 240, 255)})
         makeEffect("DepthOfFieldEffect", Lighting, {FocusDistance = 25, InFocusRadius = 45, FarIntensity = 0.15, NearIntensity = 0})
     end,
 
-	["Cinemático Pastel (Aesthetic)"] = function()
+	["Cinematic Cake"] = function()
         Lighting.GlobalShadows = true; Lighting.ClockTime = 17.2; Lighting.Brightness = 3
 		Lighting.Ambient = Color3.fromRGB(170, 130, 150)
         makeEffect("ColorCorrectionEffect", Lighting, {Contrast = 0.1, Saturation = 0.25, TintColor = Color3.fromRGB(255, 220, 230)})
