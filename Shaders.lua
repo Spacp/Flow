@@ -1,9 +1,13 @@
+-- ============================================
 -- FLOW UI | SHADERS (ENGLISH TRANSLATION FIX)
+-- ============================================
 
 if _G.FlowLoaded then return end
 _G.FlowLoaded = true
 
+-- ============================================
 -- SERVICIOS Y SETUP
+-- ============================================
 local Players          = game:GetService("Players")
 local TweenService     = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -35,7 +39,9 @@ local function Tween(obj, props, duration)
     return tween
 end
 
+-- ============================================
 -- SISTEMA DE SHADERS OPTIMIZADOS
+-- ============================================
 local originalLighting = {
 	GlobalShadows = Lighting.GlobalShadows, Brightness = Lighting.Brightness,
 	Ambient = Lighting.Ambient, OutdoorAmbient = Lighting.OutdoorAmbient,
@@ -62,7 +68,6 @@ local function makeEffect(class, parent, props)
     return eff
 end
 
--- CLAVES CAMBIADAS AL INGLÉS PARA COINCIDIR PERFECTAMENTE
 local Shaders = {
     ["Realistic"] = function()
 		Lighting.GlobalShadows = true; Lighting.ClockTime = 16.5; Lighting.Brightness = 3
@@ -133,7 +138,9 @@ local Shaders = {
     end
 }
 
+-- ============================================
 -- INTERFAZ PRINCIPAL
+-- ============================================
 local Gui = Instance.new("ScreenGui")
 Gui.Name, Gui.ResetOnSpawn, Gui.ZIndexBehavior, Gui.IgnoreGuiInset = "FlowUI", false, Enum.ZIndexBehavior.Global, true
 Gui.Parent = targetGui
@@ -200,7 +207,9 @@ ResizeBtn.Size, ResizeBtn.Position, ResizeBtn.BackgroundTransparency = UDim2.new
 ResizeBtn.Text, ResizeBtn.TextColor3, ResizeBtn.TextTransparency = "◢", Color3.new(1,1,1), 0.40
 ResizeBtn.Font, ResizeBtn.TextSize, ResizeBtn.ZIndex = Enum.Font.GothamBold, 14, 10
 
+-- ============================================
 -- LISTA Y FILAS DE SHADERS
+-- ============================================
 local Content = Instance.new("ScrollingFrame", Win)
 Content.Size, Content.Position, Content.BackgroundTransparency = UDim2.new(1, -20, 1, -(MIN_H + 10)), UDim2.new(0, 10, 0, MIN_H + 5), 1
 Content.ScrollBarThickness, Content.BorderSizePixel, Content.ZIndex = 0, 0, 3
@@ -211,7 +220,6 @@ ListLayout.Padding = UDim.new(0, 6)
 local ShaderButtons = {}
 local activeToggle = nil
 
--- LISTA DE ORDEN CON TUS NUEVOS NOMBRES EN INGLÉS
 local ShaderOrder = {
     "Realistic", "Nearby Sun", "Golden Sunset",
     "Mystical Dusk", "Fog", "Cloudy",
@@ -251,13 +259,15 @@ for i, shaderName in ipairs(ShaderOrder) do
             activeToggle = tData
             Tween(ToggleBg, {BackgroundColor3 = Color3.fromRGB(52, 199, 89)}, 0.15)
             Tween(Circle, {Position = UDim2.new(1, -16, 0.5, -7)}, 0.15)
-            clearShaders(); Shaders[shaderName]() -- Llama correctamente a la función con la clave en inglés
+            clearShaders(); Shaders[shaderName]()
         end
     end)
     table.insert(ShaderButtons, tData)
 end
 
+-- ============================================
 -- BUSCADOR
+-- ============================================
 SearchInput:GetPropertyChangedSignal("Text"):Connect(function()
 	local query = string.lower(SearchInput.Text)
 	local bestMatch = nil
@@ -280,32 +290,55 @@ SearchInput:GetPropertyChangedSignal("Text"):Connect(function()
 	end
 end)
 
--- ARRASTRE Y REDIMENSIÓN
+-- ============================================
+-- ARRASTRE Y REDIMENSIÓN COMPATIBLE CON MÓVIL
+-- ============================================
 local dragging, resizing = false, false
 local dragStart, startPos, startSize = nil, nil, nil
 
+-- Función auxiliar para verificar si el Input es Click o Touch
+local function isValidInput(input)
+    return input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch
+end
+
 TopBar.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = true; dragStart = input.Position; startPos = Container.Position end
+    if isValidInput(input) then 
+        dragging = true
+        dragStart = input.Position
+        startPos = Container.Position 
+    end
 end)
+
 ResizeBtn.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then resizing = true; dragStart = input.Position; startSize = Container.Size end
+    if isValidInput(input) then 
+        resizing = true
+        dragStart = input.Position
+        startSize = Container.Size 
+    end
 end)
+
 UserInputService.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false; resizing = false end
+    if isValidInput(input) then 
+        dragging = false
+        resizing = false 
+    end
 end)
+
 UserInputService.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
-        if dragging then
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        if dragging and dragStart and startPos then
             local delta = input.Position - dragStart
             Container.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        elseif resizing then
+        elseif resizing and dragStart and startSize then
             local delta = input.Position - dragStart
             Container.Size = UDim2.new(0, math.clamp(startSize.X.Offset + delta.X, 400, 600), 0, math.clamp(startSize.Y.Offset + delta.Y, 230, 450))
         end
     end
 end)
 
+-- ============================================
 -- MINIMIZAR Y CERRAR
+-- ============================================
 local isClosing, isMinimized, savedSize = false, false, Vector2.new(defaultW, defaultH)
 
 MinBtn.MouseButton1Click:Connect(function()
