@@ -1,13 +1,7 @@
--- ============================================
--- FLOW UI | SHADERS (ENGLISH TRANSLATION FIX)
--- ============================================
-
 if _G.FlowLoaded then return end
 _G.FlowLoaded = true
 
--- ============================================
 -- SERVICIOS Y SETUP
--- ============================================
 local Players          = game:GetService("Players")
 local TweenService     = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -21,13 +15,17 @@ local targetGui   = pcall(function() return CoreGui.Name end) and CoreGui or Loc
 
 if targetGui:FindFirstChild("FlowUI") then targetGui.FlowUI:Destroy() end
 
--- Configuración de Dimensiones
-local defaultW, defaultH = 440, 250 
-local MIN_H = 35 
-local ANIM_DURATION = 0.2   
-local CORNER_RADIUS = 8
+-- Configuración de Dimensiones y UI
+local defaultW, defaultH   = 340, 250 
+local MIN_H                = 35 
+local ANIM_DURATION        = 0.2   
+local CORNER_RADIUS        = 8
+local MIN_W, MAX_W         = 280, 500
+local MIN_WIN_H            = 180
 
--- Calcular Centro de Pantalla
+-- Fuente nativa estilo San Francisco (Apple)
+local TitleFont = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+
 local viewportSize = Camera.ViewportSize
 local centerX = (viewportSize.X / 2) - (defaultW / 2)
 local centerY = (viewportSize.Y / 2) - (defaultH / 2)
@@ -39,9 +37,7 @@ local function Tween(obj, props, duration)
     return tween
 end
 
--- ============================================
 -- SISTEMA DE SHADERS OPTIMIZADOS
--- ============================================
 local originalLighting = {
 	GlobalShadows = Lighting.GlobalShadows, Brightness = Lighting.Brightness,
 	Ambient = Lighting.Ambient, OutdoorAmbient = Lighting.OutdoorAmbient,
@@ -138,88 +134,122 @@ local Shaders = {
     end
 }
 
--- ============================================
 -- INTERFAZ PRINCIPAL
--- ============================================
 local Gui = Instance.new("ScreenGui")
 Gui.Name, Gui.ResetOnSpawn, Gui.ZIndexBehavior, Gui.IgnoreGuiInset = "FlowUI", false, Enum.ZIndexBehavior.Global, true
 Gui.Parent = targetGui
 
 local Container = Instance.new("Frame")
-Container.Name, Container.Size, Container.Position = "MainContainer", UDim2.new(0, defaultW, 0, defaultH), UDim2.new(0, centerX, 0, centerY)
-Container.BackgroundTransparency, Container.Parent = 1, Gui
+Container.Name                   = "MainContainer"
+Container.Size                   = UDim2.new(0, defaultW, 0, defaultH)
+Container.Position               = UDim2.new(0, centerX, 0, centerY)
+Container.BackgroundTransparency = 1
+Container.Parent                 = Gui
 
 local DropShadow = Instance.new("ImageLabel")
-DropShadow.Name, DropShadow.Size, DropShadow.Position, DropShadow.AnchorPoint = "PerfectShadow", UDim2.new(1, 40, 1, 40), UDim2.new(0.5, 0, 0.5, 0), Vector2.new(0.5, 0.5)
-DropShadow.BackgroundTransparency, DropShadow.Image, DropShadow.ImageColor3 = 1, "rbxassetid://5554236805", Color3.new(0,0,0)
-DropShadow.ImageTransparency, DropShadow.ScaleType, DropShadow.SliceCenter = 0.3, Enum.ScaleType.Slice, Rect.new(23, 23, 277, 277)
-DropShadow.ZIndex, DropShadow.Parent = 0, Container
+DropShadow.Name                   = "PerfectShadow"
+DropShadow.Size                   = UDim2.new(1, 40, 1, 40)
+DropShadow.Position               = UDim2.new(0.5, 0, 0.5, 0)
+DropShadow.AnchorPoint            = Vector2.new(0.5, 0.5)
+DropShadow.BackgroundTransparency = 1
+DropShadow.Image                  = "rbxassetid://5554236805"
+DropShadow.ImageColor3            = Color3.new(0,0,0)
+DropShadow.ImageTransparency      = 1 
+DropShadow.ScaleType              = Enum.ScaleType.Slice
+DropShadow.SliceCenter            = Rect.new(23, 23, 277, 277)
+DropShadow.ZIndex                 = 0
+DropShadow.Parent                 = Container
 
 local Win = Instance.new("Frame")
-Win.Size, Win.Position, Win.AnchorPoint = UDim2.new(1, 0, 1, 0), UDim2.new(0.5, 0, 0.5, 0), Vector2.new(0.5, 0.5)
-Win.BackgroundColor3, Win.BackgroundTransparency, Win.ClipsDescendants, Win.Active = Color3.fromRGB(25, 25, 30), 0.15, true, true
-Win.ZIndex, Win.Parent = 1, Container
+Win.Size                   = UDim2.new(1, 0, 1, 0)
+Win.Position               = UDim2.new(0.5, 0, 0.5, 0)
+Win.AnchorPoint            = Vector2.new(0.5, 0.5)
+Win.BackgroundColor3       = Color3.fromRGB(25, 25, 30)
+Win.BackgroundTransparency = 1 
+Win.ClipsDescendants       = true
+Win.Active                 = true
+Win.ZIndex                 = 1
+Win.Parent                 = Container
 Instance.new("UICorner", Win).CornerRadius = UDim.new(0, CORNER_RADIUS)
+
 local GlassStroke = Instance.new("UIStroke", Win)
-GlassStroke.Color, GlassStroke.Transparency, GlassStroke.Thickness = Color3.new(1,1,1), 0.85, 1.2
+GlassStroke.Color        = Color3.new(1,1,1)
+GlassStroke.Transparency = 1 
+GlassStroke.Thickness    = 1.2
 
 local TopBar = Instance.new("Frame")
-TopBar.Size, TopBar.BackgroundTransparency, TopBar.ZIndex, TopBar.Parent = UDim2.new(1, 0, 0, MIN_H), 1, 2, Win
+TopBar.Size                   = UDim2.new(1, 0, 0, MIN_H)
+TopBar.BackgroundTransparency = 1
+TopBar.ZIndex                 = 2
+TopBar.Parent                 = Win
 
 local Title = Instance.new("TextLabel")
-Title.Text, Title.Font, Title.TextSize, Title.TextColor3 = "Flow • Shaders", Enum.Font.GothamMedium, 13, Color3.new(1,1,1)
-Title.BackgroundTransparency, Title.Size, Title.Position = 1, UDim2.new(0, 110, 1, 0), UDim2.new(0, 15, 0, 0)
-Title.TextXAlignment, Title.ZIndex, Title.Parent = Enum.TextXAlignment.Left, 3, TopBar
-
-local SearchBar = Instance.new("Frame")
-SearchBar.Size, SearchBar.Position, SearchBar.BackgroundColor3 = UDim2.new(1, -210, 0, 24), UDim2.new(0, 125, 0.5, -12), Color3.new(1,1,1)
-SearchBar.BackgroundTransparency, SearchBar.ZIndex, SearchBar.Parent = 0.90, 3, TopBar
-Instance.new("UICorner", SearchBar).CornerRadius = UDim.new(0, 6)
-local SearchStroke = Instance.new("UIStroke", SearchBar)
-SearchStroke.Color, SearchStroke.Transparency = Color3.new(1,1,1), 0.8
-
-local HintInput = Instance.new("TextLabel")
-HintInput.Name, HintInput.Text, HintInput.Font, HintInput.TextSize = "HintInput", "", Enum.Font.Gotham, 12
-HintInput.TextColor3, HintInput.TextTransparency, HintInput.BackgroundTransparency = Color3.new(1,1,1), 0.65, 1
-HintInput.Size, HintInput.Position, HintInput.TextXAlignment = UDim2.new(1, -16, 1, 0), UDim2.new(0, 8, 0, 0), Enum.TextXAlignment.Left
-HintInput.ZIndex, HintInput.Parent = 3, SearchBar
-
-local SearchInput = Instance.new("TextBox")
-SearchInput.Size, SearchInput.Position, SearchInput.BackgroundTransparency = UDim2.new(1, -16, 1, 0), UDim2.new(0, 8, 0, 0), 1
-SearchInput.Text, SearchInput.PlaceholderText, SearchInput.Font, SearchInput.TextSize = "", "Search shaders...", Enum.Font.Gotham, 12
-SearchInput.TextColor3, SearchInput.PlaceholderColor3, SearchInput.TextXAlignment = Color3.new(1,1,1), Color3.fromRGB(180, 180, 185), Enum.TextXAlignment.Left
-SearchInput.ZIndex, SearchInput.Parent = 4, SearchBar
+Title.Text                   = "Flow • Shaders"
+Title.FontFace               = TitleFont 
+Title.TextSize               = 13
+Title.TextColor3             = Color3.new(1,1,1)
+Title.BackgroundTransparency = 1
+Title.Size                   = UDim2.new(1, -80, 1, 0)
+Title.Position               = UDim2.new(0, 15, 0, 0)
+Title.TextXAlignment         = Enum.TextXAlignment.Left
+Title.TextTransparency       = 1
+Title.ZIndex                 = 3
+Title.Parent                 = TopBar
 
 local function CreateBtn(icon, posOffset)
     local Btn = Instance.new("TextButton")
-    Btn.Size, Btn.Position, Btn.BackgroundColor3 = UDim2.new(0, 24, 0, 24), UDim2.new(1, posOffset, 0.5, -12), Color3.new(1,1,1)
-    Btn.BackgroundTransparency, Btn.Text, Btn.Font, Btn.TextSize = 0.85, icon, Enum.Font.Gotham, 16
-    Btn.TextColor3, Btn.ZIndex, Btn.Parent = Color3.new(1,1,1), 4, TopBar
+    Btn.Size                   = UDim2.new(0, 24, 0, 24)
+    Btn.Position               = UDim2.new(1, posOffset, 0.5, -12)
+    Btn.BackgroundColor3       = Color3.new(1,1,1)
+    Btn.BackgroundTransparency = 1
+    Btn.Text                   = icon
+    Btn.Font                   = Enum.Font.Gotham
+    Btn.TextSize               = 16
+    Btn.TextColor3             = Color3.new(1,1,1)
+    Btn.TextTransparency       = 1
+    Btn.ZIndex                 = 4
+    Btn.Parent                 = TopBar
     Instance.new("UICorner", Btn).CornerRadius = UDim.new(1, 0)
     return Btn
 end
 
-local MinBtn = CreateBtn("−", -65)
+local MinBtn   = CreateBtn("−", -65)
 local CloseBtn = CreateBtn("×", -35)
 
-local ResizeBtn = Instance.new("TextButton", Container)
-ResizeBtn.Size, ResizeBtn.Position, ResizeBtn.BackgroundTransparency = UDim2.new(0, 18, 0, 18), UDim2.new(1, -2, 1, -2), 1
-ResizeBtn.Text, ResizeBtn.TextColor3, ResizeBtn.TextTransparency = "◢", Color3.new(1,1,1), 0.40
-ResizeBtn.Font, ResizeBtn.TextSize, ResizeBtn.ZIndex = Enum.Font.GothamBold, 14, 10
+-- BOTÓN RESIZE CON ADHESIVO (Pequeño y ajustado)
+local ResizeBtn = Instance.new("TextButton")
+ResizeBtn.Name                   = "ResizeBtn"
+ResizeBtn.Size                   = UDim2.new(0, 18, 0, 18)
+ResizeBtn.Position               = UDim2.new(1, 2, 1, 2)
+ResizeBtn.BackgroundTransparency = 1
+ResizeBtn.Text                   = ""
+ResizeBtn.ZIndex                 = 50
+ResizeBtn.Parent                 = Container
 
--- ============================================
+local ResizeIcon = Instance.new("ImageLabel")
+ResizeIcon.Size                   = UDim2.new(1, 0, 1, 0)
+ResizeIcon.BackgroundTransparency = 1
+ResizeIcon.Image                  = "rbxthumb://type=Asset&id=131384103443240&w=150&h=150"
+ResizeIcon.ImageColor3            = Color3.new(1,1,1)
+ResizeIcon.ScaleType              = Enum.ScaleType.Fit
+ResizeIcon.ImageTransparency      = 1 
+ResizeIcon.ZIndex                 = 51
+ResizeIcon.Parent                 = ResizeBtn
+
 -- LISTA Y FILAS DE SHADERS
--- ============================================
 local Content = Instance.new("ScrollingFrame", Win)
-Content.Size, Content.Position, Content.BackgroundTransparency = UDim2.new(1, -20, 1, -(MIN_H + 10)), UDim2.new(0, 10, 0, MIN_H + 5), 1
-Content.ScrollBarThickness, Content.BorderSizePixel, Content.ZIndex = 0, 0, 3
-Content.AutomaticCanvasSize, Content.CanvasSize = Enum.AutomaticSize.Y, UDim2.new(0, 0, 0, 0)
+Content.Size                   = UDim2.new(1, -20, 1, -(MIN_H + 10))
+Content.Position               = UDim2.new(0, 10, 0, MIN_H + 5)
+Content.BackgroundTransparency = 1
+Content.ScrollBarThickness     = 0
+Content.BorderSizePixel        = 0
+Content.ZIndex                 = 3
+Content.AutomaticCanvasSize    = Enum.AutomaticSize.Y
+Content.CanvasSize             = UDim2.new(0, 0, 0, 0)
 local ListLayout = Instance.new("UIListLayout", Content)
 ListLayout.Padding = UDim.new(0, 6)
 
-local ShaderButtons = {}
 local activeToggle = nil
-
 local ShaderOrder = {
     "Realistic", "Nearby Sun", "Golden Sunset",
     "Mystical Dusk", "Fog", "Cloudy",
@@ -228,23 +258,35 @@ local ShaderOrder = {
 
 for i, shaderName in ipairs(ShaderOrder) do
     local Btn = Instance.new("TextButton", Content)
-    Btn.Name = "ShaderRow_" .. i
-    Btn.Size, Btn.BackgroundColor3, Btn.BackgroundTransparency = UDim2.new(1, 0, 0, 34), Color3.new(1,1,1), 0.94
-    Btn.Text, Btn.Font, Btn.TextSize, Btn.TextColor3 = "  " .. shaderName, Enum.Font.GothamMedium, 12, Color3.fromRGB(240,240,245)
-    Btn.TextXAlignment, Btn.ZIndex = Enum.TextXAlignment.Left, 4
+    Btn.Name                   = "ShaderRow_" .. i
+    Btn.Size                   = UDim2.new(1, 0, 0, 34)
+    Btn.BackgroundColor3       = Color3.new(1,1,1)
+    Btn.BackgroundTransparency = 0.94
+    Btn.Text                   = "  " .. shaderName
+    Btn.Font                   = Enum.Font.GothamMedium
+    Btn.TextSize               = 12
+    Btn.TextColor3             = Color3.fromRGB(240,240,245)
+    Btn.TextXAlignment         = Enum.TextXAlignment.Left
+    Btn.ZIndex                 = 4
     Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 5)
     
     local ToggleBg = Instance.new("Frame", Btn)
-    ToggleBg.Name = "ToggleBg"
-    ToggleBg.Size, ToggleBg.Position, ToggleBg.BackgroundColor3 = UDim2.new(0, 34, 0, 18), UDim2.new(1, -45, 0.5, -9), Color3.fromRGB(90, 90, 95)
-    ToggleBg.ZIndex = 5; Instance.new("UICorner", ToggleBg).CornerRadius = UDim.new(1, 0)
+    ToggleBg.Name                   = "ToggleBg"
+    ToggleBg.Size                   = UDim2.new(0, 34, 0, 18)
+    ToggleBg.Position               = UDim2.new(1, -45, 0.5, -9)
+    ToggleBg.BackgroundColor3       = Color3.fromRGB(90, 90, 95)
+    ToggleBg.ZIndex                 = 5
+    Instance.new("UICorner", ToggleBg).CornerRadius = UDim.new(1, 0)
     
     local Circle = Instance.new("Frame", ToggleBg)
-    Circle.Name = "ToggleCircle"
-    Circle.Size, Circle.Position, Circle.BackgroundColor3 = UDim2.new(0, 14, 0, 14), UDim2.new(0, 2, 0.5, -7), Color3.new(1,1,1)
-    Circle.ZIndex = 6; Instance.new("UICorner", Circle).CornerRadius = UDim.new(1, 0)
+    Circle.Name                   = "ToggleCircle"
+    Circle.Size                   = UDim2.new(0, 14, 0, 14)
+    Circle.Position               = UDim2.new(0, 2, 0.5, -7)
+    Circle.BackgroundColor3       = Color3.new(1,1,1)
+    Circle.ZIndex                 = 6
+    Instance.new("UICorner", Circle).CornerRadius = UDim.new(1, 0)
     
-    local tData = {Btn = Btn, Bg = ToggleBg, Circle = Circle, Name = shaderName:lower()}
+    local tData = {Btn = Btn, Bg = ToggleBg, Circle = Circle, Name = shaderName}
     
     Btn.MouseButton1Click:Connect(function()
         if activeToggle == tData then
@@ -259,98 +301,67 @@ for i, shaderName in ipairs(ShaderOrder) do
             activeToggle = tData
             Tween(ToggleBg, {BackgroundColor3 = Color3.fromRGB(52, 199, 89)}, 0.15)
             Tween(Circle, {Position = UDim2.new(1, -16, 0.5, -7)}, 0.15)
-            clearShaders(); Shaders[shaderName]()
+            clearShaders(); Shaders[shaderName]() 
         end
     end)
-    table.insert(ShaderButtons, tData)
 end
 
--- ============================================
--- BUSCADOR
--- ============================================
-SearchInput:GetPropertyChangedSignal("Text"):Connect(function()
-	local query = string.lower(SearchInput.Text)
-	local bestMatch = nil
-	for _, item in ipairs(ShaderButtons) do
-		if string.find(item.Name, query, 1, true) or query == "" then
-			item.Btn.Visible = true
-			if query ~= "" and not bestMatch then bestMatch = item.Btn.Text:sub(3) end
-		else
-			item.Btn.Visible = false
-		end
-	end
-	if bestMatch and query ~= "" then
-        if string.sub(string.lower(bestMatch), 1, #query) == query then
-            HintInput.Text = SearchInput.Text .. string.sub(bestMatch, #query + 1)
-        else
-            HintInput.Text = bestMatch
-        end
-	else
-		HintInput.Text = ""
-	end
-end)
-
--- ============================================
--- ARRASTRE Y REDIMENSIÓN COMPATIBLE CON MÓVIL
--- ============================================
+-- ARRASTRE Y REDIMENSIÓN CON LÍMITES DINÁMICOS
 local dragging, resizing = false, false
 local dragStart, startPos, startSize = nil, nil, nil
 
--- Función auxiliar para verificar si el Input es Click o Touch
-local function isValidInput(input)
-    return input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch
-end
-
 TopBar.InputBegan:Connect(function(input)
-    if isValidInput(input) then 
-        dragging = true
-        dragStart = input.Position
-        startPos = Container.Position 
-    end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true; dragStart = input.Position; startPos = Container.Position
+	end
 end)
-
 ResizeBtn.InputBegan:Connect(function(input)
-    if isValidInput(input) then 
-        resizing = true
-        dragStart = input.Position
-        startSize = Container.Size 
-    end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		resizing = true; dragStart = input.Position; startSize = Container.Size
+	end
 end)
-
 UserInputService.InputEnded:Connect(function(input)
-    if isValidInput(input) then 
-        dragging = false
-        resizing = false 
-    end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false; resizing = false end
 end)
-
 UserInputService.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-        if dragging and dragStart and startPos then
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        if dragging then
             local delta = input.Position - dragStart
             Container.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        elseif resizing and dragStart and startSize then
+        elseif resizing then
             local delta = input.Position - dragStart
-            Container.Size = UDim2.new(0, math.clamp(startSize.X.Offset + delta.X, 400, 600), 0, math.clamp(startSize.Y.Offset + delta.Y, 230, 450))
+            
+            -- Calculamos el ancho dentro del mínimo y máximo permitido
+            local newW = math.clamp(startSize.X.Offset + delta.X, MIN_W, MAX_W)
+            
+            -- Calculamos dinámicamente el alto máximo basándonos en los botones creados
+            local contentHeight = ListLayout.AbsoluteContentSize.Y
+            local dynamicMaxH = MIN_H + 15 + contentHeight -- TopBar(35) + Margen(15) + Total altura de contenido
+            
+            -- Limitamos el alto de la ventana al alto dinámico
+            local newH = math.clamp(startSize.Y.Offset + delta.Y, MIN_WIN_H, dynamicMaxH)
+            
+            Container.Size = UDim2.new(0, newW, 0, newH)
         end
     end
 end)
 
--- ============================================
+-- HOVERS
+CloseBtn.MouseEnter:Connect(function() Tween(CloseBtn, {BackgroundColor3 = Color3.fromRGB(255, 80, 80), BackgroundTransparency = 0.5}, 0.15) end)
+CloseBtn.MouseLeave:Connect(function() Tween(CloseBtn, {BackgroundColor3 = Color3.new(1,1,1), BackgroundTransparency = 0.85}, 0.15) end)
+MinBtn.MouseEnter:Connect(function() Tween(MinBtn, {BackgroundColor3 = Color3.fromRGB(255, 210, 80), BackgroundTransparency = 0.5}, 0.15) end)
+MinBtn.MouseLeave:Connect(function() Tween(MinBtn, {BackgroundColor3 = Color3.new(1,1,1), BackgroundTransparency = 0.85}, 0.15) end)
+
 -- MINIMIZAR Y CERRAR
--- ============================================
-local isClosing, isMinimized, savedSize = false, false, Vector2.new(defaultW, defaultH)
+local isClosing, isMinimized = false, false
+local savedSize = Vector2.new(defaultW, defaultH)
 
 MinBtn.MouseButton1Click:Connect(function()
     if isClosing then return end; isMinimized = not isMinimized
     if isMinimized then
-        MinBtn.Text, SearchInput.TextEditable, SearchInput.Active, ResizeBtn.Visible = "+", false, false, false
+        MinBtn.Text, ResizeBtn.Visible = "+", false
 		savedSize = Vector2.new(Container.AbsoluteSize.X, Container.AbsoluteSize.Y)
         Tween(Container, {Size = UDim2.new(0, savedSize.X, 0, MIN_H)}, 0.18)
-		Tween(SearchBar, {BackgroundTransparency = 1}, 0.18)
-		Tween(SearchStroke, {Transparency = 1}, 0.18)
-		Tween(SearchInput, {TextTransparency = 1}, 0.18); Tween(HintInput, {TextTransparency = 1}, 0.18)
-		task.delay(0.18, function() if isMinimized then SearchBar.Visible = false end end)
         
         for _, c in pairs(Content:GetDescendants()) do
             if c:IsA("TextButton") then
@@ -360,19 +371,13 @@ MinBtn.MouseButton1Click:Connect(function()
             end
         end
     else
-        MinBtn.Text, SearchBar.Visible, SearchInput.TextEditable, SearchInput.Active, ResizeBtn.Visible = "−", true, true, true, true
+        MinBtn.Text, ResizeBtn.Visible = "−", true
         Tween(Container, {Size = UDim2.new(0, savedSize.X, 0, savedSize.Y)}, 0.18)
-		Tween(SearchBar, {BackgroundTransparency = 0.90}, 0.18)
-		Tween(SearchStroke, {Transparency = 0.8}, 0.18)
-		Tween(SearchInput, {TextTransparency = 0}, 0.18)
-		if HintInput.Text ~= "" then Tween(HintInput, {TextTransparency = 0.65}, 0.18) end
         
         for _, c in pairs(Content:GetDescendants()) do
             if c:IsA("TextButton") and c.Name:match("ShaderRow") then
                 Tween(c, {BackgroundTransparency = 0.94, TextTransparency = 0}, 0.18)
-            elseif c.Name == "ToggleBg" then
-                Tween(c, {BackgroundTransparency = 0}, 0.18)
-            elseif c.Name == "ToggleCircle" then
+            elseif c.Name == "ToggleBg" or c.Name == "ToggleCircle" then
                 Tween(c, {BackgroundTransparency = 0}, 0.18)
             end
         end
@@ -393,3 +398,18 @@ CloseBtn.MouseButton1Click:Connect(function()
     end
     task.wait(0.15); pcall(clearShaders); _G.FlowLoaded = nil; Gui:Destroy()
 end)
+
+-- ANIMACIÓN DE ENTRADA
+Container.Size = UDim2.new(0, defaultW * 0.95, 0, defaultH * 0.95)
+Container.Position = UDim2.new(0, centerX + defaultW * 0.025, 0, centerY + defaultH * 0.025)
+
+task.wait(0.05)
+
+Tween(Container,   {Size = UDim2.new(0, defaultW, 0, defaultH), Position = UDim2.new(0, centerX, 0, centerY)}, ANIM_DURATION)
+Tween(Win,         {BackgroundTransparency = 0.15}, ANIM_DURATION)
+Tween(GlassStroke, {Transparency = 0.85}, ANIM_DURATION)
+Tween(DropShadow,  {ImageTransparency = 0.30}, ANIM_DURATION)
+Tween(Title,       {TextTransparency = 0}, ANIM_DURATION)
+Tween(ResizeIcon,  {ImageTransparency = 0}, ANIM_DURATION)
+Tween(MinBtn,      {BackgroundTransparency = 0.85, TextTransparency = 0}, ANIM_DURATION)
+Tween(CloseBtn,    {BackgroundTransparency = 0.85, TextTransparency = 0}, ANIM_DURATION)
