@@ -12,9 +12,9 @@ local targetGui   = pcall(function() return CoreGui.Name end) and CoreGui or Loc
 
 if targetGui:FindFirstChild("FlowUI_Speed") then targetGui.FlowUI_Speed:Destroy() end
 
-local defaultW, defaultH   = 260, 130 
-local MIN_H                = 35 
-local ANIM_DURATION        = 0.25  
+local defaultW, defaultH   = 260, 130
+local MIN_H                = 35
+local ANIM_DURATION        = 0.25
 local CORNER_RADIUS        = 8
 local MIN_W, MAX_W         = 260, 500
 local MIN_WIN_H            = 130
@@ -67,7 +67,7 @@ Container.Parent = Gui
 
 local DropShadow = Instance.new("ImageLabel")
 DropShadow.Name, DropShadow.Size, DropShadow.Position, DropShadow.AnchorPoint = "PerfectShadow", UDim2.new(1, 40, 1, 40), UDim2.new(0.5, 0, 0.5, 0), Vector2.new(0.5, 0.5)
-DropShadow.BackgroundTransparency, DropShadow.Image, DropShadow.ImageColor3, DropShadow.ImageTransparency = 1, "rbxassetid://5554236805", Color3.new(0,0,0), 1 
+DropShadow.BackgroundTransparency, DropShadow.Image, DropShadow.ImageColor3, DropShadow.ImageTransparency = 1, "rbxassetid://5554236805", Color3.new(0,0,0), 1
 DropShadow.ScaleType, DropShadow.SliceCenter, DropShadow.ZIndex, DropShadow.Parent = Enum.ScaleType.Slice, Rect.new(23, 23, 277, 277), 0, Container
 
 local Win = Instance.new("Frame")
@@ -126,7 +126,7 @@ local function createSlider(parent, posY, minVal, maxVal, defaultVal, onChange)
     Fill.ZIndex = 6
     Instance.new("UICorner", Fill).CornerRadius = UDim.new(1, 0)
 
-    local Knob = Instance.new("TextButton", Track) 
+    local Knob = Instance.new("TextButton", Track)
     Knob.Size = UDim2.new(0, 12, 0, 12)
     Knob.AnchorPoint = Vector2.new(0.5, 0.5)
     Knob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -156,7 +156,9 @@ local function createSlider(parent, posY, minVal, maxVal, defaultVal, onChange)
     end)
 
     UserInputService.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then isSliding = false end
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            isSliding = false
+        end
     end)
 
     UserInputService.InputChanged:Connect(function(input)
@@ -177,10 +179,14 @@ local function createSlider(parent, posY, minVal, maxVal, defaultVal, onChange)
     end
 
     updateVisual(defaultVal, false)
-    return { updateVisual = updateVisual, getCurrent = function() return currentValue end, set = function(v) currentValue = v end }
+    return {
+        updateVisual = updateVisual,
+        getCurrent   = function() return currentValue end,
+        set          = function(v) currentValue = v end
+    }
 end
 
--- 1. Textbox Velocidad
+-- TEXTBOX VELOCIDAD
 local SpeedBox = Instance.new("TextBox", SpeedContent)
 SpeedBox.Size = UDim2.new(1, 0, 0, 28)
 SpeedBox.BackgroundColor3, SpeedBox.BackgroundTransparency = Color3.new(1,1,1), 0.94
@@ -188,7 +194,7 @@ SpeedBox.Text, SpeedBox.Font, SpeedBox.TextSize, SpeedBox.TextColor3 = tostring(
 SpeedBox.PlaceholderText, SpeedBox.PlaceholderColor3, SpeedBox.ClearTextOnFocus, SpeedBox.ZIndex = "Velocidad al caminar...", Color3.fromRGB(100, 100, 105), false, 4
 Instance.new("UICorner", SpeedBox).CornerRadius = UDim.new(0, 5)
 
--- 2. Slider Velocidad
+-- SLIDER VELOCIDAD
 local WalkSlider = createSlider(SpeedContent, 35, MIN_SPEED, MAX_SPEED, currentSpeed, function(val, animate)
     currentSpeed = val
     SpeedBox.Text = tostring(currentSpeed)
@@ -196,7 +202,7 @@ local WalkSlider = createSlider(SpeedContent, 35, MIN_SPEED, MAX_SPEED, currentS
     WalkSlider.updateVisual(val, animate)
 end)
 
--- 3. Botón Restablecer
+-- BOTÓN RESTABLECER
 local BtnReset = Instance.new("TextButton", SpeedContent)
 BtnReset.Size, BtnReset.Position = UDim2.new(0.7, 0, 0, 24), UDim2.new(0.15, 0, 0, 50)
 BtnReset.BackgroundColor3, BtnReset.BackgroundTransparency, BtnReset.Text = Color3.fromRGB(50, 50, 55), 0, "Restablecer"
@@ -204,47 +210,114 @@ BtnReset.Font, BtnReset.TextSize, BtnReset.TextColor3, BtnReset.ZIndex = Enum.Fo
 Instance.new("UICorner", BtnReset).CornerRadius = UDim.new(0, 5)
 
 BtnReset.MouseButton1Click:Connect(function()
-    currentSpeed = MIN_SPEED; WalkSlider.set(MIN_SPEED); SpeedBox.Text = tostring(MIN_SPEED); applyWalkSpeed(); WalkSlider.updateVisual(MIN_SPEED, true)
+    currentSpeed = MIN_SPEED
+    WalkSlider.set(MIN_SPEED)
+    SpeedBox.Text = tostring(MIN_SPEED)
+    applyWalkSpeed()
+    WalkSlider.updateVisual(MIN_SPEED, true)
 end)
 
 SpeedBox.FocusLost:Connect(function()
     local num = tonumber(SpeedBox.Text)
     if num then
         currentSpeed = math.clamp(math.round(num), MIN_SPEED, MAX_SPEED)
-        WalkSlider.set(currentSpeed); applyWalkSpeed(); WalkSlider.updateVisual(currentSpeed, true)
+        WalkSlider.set(currentSpeed)
+        applyWalkSpeed()
+        WalkSlider.updateVisual(currentSpeed, true)
     end
     SpeedBox.Text = tostring(currentSpeed)
 end)
 
--- Hovers
+-- HOVERS BOTONES CONTENIDO
 BtnReset.MouseEnter:Connect(function() Tween(BtnReset, {BackgroundColor3 = Color3.fromRGB(65, 65, 70)}, 0.15) end)
 BtnReset.MouseLeave:Connect(function() Tween(BtnReset, {BackgroundColor3 = Color3.fromRGB(50, 50, 55)}, 0.15) end)
 
--- ARRASTRE Y REDIMENSIÓN
+-- ─────────────────────────────────────────────────────────────────────
+-- ARRASTRE Y REDIMENSIÓN (PC + MÓVIL)
+-- ─────────────────────────────────────────────────────────────────────
 local dragging, resizing = false, false
 local dragStart, startPos, startSize = nil, nil, nil
-TopBar.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = true; dragStart = input.Position; startPos = Container.Position end end)
-ResizeBtn.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then resizing = true; dragStart = input.Position; startSize = Container.Size end end)
-UserInputService.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false; resizing = false end end)
-UserInputService.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
-        if dragging then
-            local delta = input.Position - dragStart
-            Container.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        elseif resizing then
-            local delta = input.Position - dragStart
-            Container.Size = UDim2.new(0, math.clamp(startSize.X.Offset + delta.X, MIN_W, MAX_W), 0, math.clamp(startSize.Y.Offset + delta.Y, MIN_WIN_H, 500))
-        end
+
+local function isTouchOrMouse(input)
+    return input.UserInputType == Enum.UserInputType.MouseButton1
+        or input.UserInputType == Enum.UserInputType.Touch
+end
+
+local function isMovement(input)
+    return input.UserInputType == Enum.UserInputType.MouseMovement
+        or input.UserInputType == Enum.UserInputType.Touch
+end
+
+-- Arrastre desde TopBar
+TopBar.InputBegan:Connect(function(input)
+    if isTouchOrMouse(input) then
+        dragging  = true
+        dragStart = input.Position
+        startPos  = Container.Position
     end
 end)
 
+TopBar.InputEnded:Connect(function(input)
+    if isTouchOrMouse(input) then
+        dragging = false
+    end
+end)
+
+-- Redimensión desde ResizeBtn
+ResizeBtn.InputBegan:Connect(function(input)
+    if isTouchOrMouse(input) then
+        resizing  = true
+        dragStart = input.Position
+        startSize = Container.Size
+    end
+end)
+
+ResizeBtn.InputEnded:Connect(function(input)
+    if isTouchOrMouse(input) then
+        resizing = false
+    end
+end)
+
+-- Soltar en cualquier lugar
+UserInputService.InputEnded:Connect(function(input)
+    if isTouchOrMouse(input) then
+        dragging = false
+        resizing = false
+    end
+end)
+
+-- Movimiento (mouse y dedo)
+UserInputService.InputChanged:Connect(function(input)
+    if not isMovement(input) then return end
+
+    if dragging and dragStart then
+        local delta = input.Position - dragStart
+        Container.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+    elseif resizing and dragStart then
+        local delta = input.Position - dragStart
+        Container.Size = UDim2.new(
+            0, math.clamp(startSize.X.Offset + delta.X, MIN_W, MAX_W),
+            0, math.clamp(startSize.Y.Offset + delta.Y, MIN_WIN_H, 500)
+        )
+    end
+end)
+
+-- ─────────────────────────────────────────────────────────────────────
 -- HOVERS VENTANA
+-- ─────────────────────────────────────────────────────────────────────
 CloseBtn.MouseEnter:Connect(function() Tween(CloseBtn, {BackgroundColor3 = Color3.fromRGB(255, 80, 80), BackgroundTransparency = 0.5}, 0.15) end)
 CloseBtn.MouseLeave:Connect(function() Tween(CloseBtn, {BackgroundColor3 = Color3.new(1,1,1), BackgroundTransparency = 0.85}, 0.15) end)
 MinBtn.MouseEnter:Connect(function() Tween(MinBtn, {BackgroundColor3 = Color3.fromRGB(255, 210, 80), BackgroundTransparency = 0.5}, 0.15) end)
 MinBtn.MouseLeave:Connect(function() Tween(MinBtn, {BackgroundColor3 = Color3.new(1,1,1), BackgroundTransparency = 0.85}, 0.15) end)
 
+-- ─────────────────────────────────────────────────────────────────────
 -- MINIMIZAR Y CERRAR
+-- ─────────────────────────────────────────────────────────────────────
 local isClosing, isMinimized = false, false
 local savedSize = Vector2.new(defaultW, defaultH)
 
@@ -269,7 +342,6 @@ CloseBtn.MouseButton1Click:Connect(function()
     if isClosing then return end
     isClosing = true
 
-    -- ✅ Restaurar velocidad y desconectar evento antes de cerrar
     currentSpeed = MIN_SPEED
     resetWalkSpeed()
     if charConnection then
@@ -281,10 +353,15 @@ CloseBtn.MouseButton1Click:Connect(function()
     Tween(GlassStroke, {Transparency = 1}, 0.15)
     for _, c in pairs(Container:GetDescendants()) do
         pcall(function()
-            if c:IsA("TextLabel") or c:IsA("TextBox") then Tween(c, {TextTransparency = 1}, 0.15)
-            elseif c:IsA("TextButton") or c:IsA("Frame") then Tween(c, {BackgroundTransparency = 1}, 0.15)
-            elseif c:IsA("ImageLabel") then Tween(c, {ImageTransparency = 1}, 0.15)
-            elseif c:IsA("UIStroke") then Tween(c, {Transparency = 1}, 0.15) end
+            if c:IsA("TextLabel") or c:IsA("TextBox") then
+                Tween(c, {TextTransparency = 1}, 0.15)
+            elseif c:IsA("TextButton") or c:IsA("Frame") then
+                Tween(c, {BackgroundTransparency = 1}, 0.15)
+            elseif c:IsA("ImageLabel") then
+                Tween(c, {ImageTransparency = 1}, 0.15)
+            elseif c:IsA("UIStroke") then
+                Tween(c, {Transparency = 1}, 0.15)
+            end
         end)
     end
     task.wait(0.15)
@@ -292,7 +369,9 @@ CloseBtn.MouseButton1Click:Connect(function()
     Gui:Destroy()
 end)
 
+-- ─────────────────────────────────────────────────────────────────────
 -- ANIMACIÓN DE ENTRADA
+-- ─────────────────────────────────────────────────────────────────────
 Container.Size = UDim2.new(0, defaultW * 0.95, 0, defaultH * 0.95)
 Container.Position = UDim2.new(0, centerX + defaultW * 0.025, 0, centerY + defaultH * 0.025)
 task.wait(0.05)
