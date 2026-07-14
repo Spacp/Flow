@@ -16,7 +16,7 @@ if getgenv()._FlowRejoinSessionLoaded then return end
 getgenv()._FlowRejoinSessionLoaded = true
 
 local PENDING_FILE = "FlowUI_RejoinPending.json"
-local SCRIPT_URL   = "raw"
+local SCRIPT_URL   = "https://raw.githubusercontent.com/Spacp/Flow/refs/heads/main/rejoin.lua"
 
 local function SavePending(pos)
     if not writefile then return end
