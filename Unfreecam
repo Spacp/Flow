@@ -1,0 +1,3 @@
+if _G.FlowStopFreecam then
+    _G.FlowStopFreecam()
+end
